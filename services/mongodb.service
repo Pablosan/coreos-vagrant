@@ -1,0 +1,19 @@
+[Unit]
+Description=mongodb
+After=etcd.service
+After=docker.service
+Requires=docker.service
+Requires=mongodb-volume.service
+
+[Service]
+Restart=on-failure
+TimeoutSec=500
+ExecStartPre=-/usr/bin/docker kill mongodb
+ExecStartPre=-/usr/bin/docker rm mongodb
+ExecStartPre=/usr/bin/docker pull pablosan/mongo
+ExecStart=/usr/bin/docker run --rm -p 27017:27017 --name mongodb --volumes-from mongodb-volume pablosan/mongo
+ExecStop=-/usr/bin/docker stop mongodb
+
+[X-Fleet]
+X-Conflicts=mongodb.service
+

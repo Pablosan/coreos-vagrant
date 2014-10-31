@@ -1,0 +1,18 @@
+[Unit]
+Description=redis
+After=etcd.service
+After=docker.service
+Requires=docker.service
+
+[Service]
+Restart=on-failure
+TimeoutSec=500
+ExecStartPre=-/usr/bin/docker kill redis
+ExecStartPre=-/usr/bin/docker rm redis
+ExecStartPre=/usr/bin/docker pull pablosan/redis
+ExecStart=/usr/bin/docker run --rm -p 6379:6379 --name redis pablosan/redis
+ExecStop=-/usr/bin/docker stop redis
+
+[X-Fleet]
+X-Conflicts=redis.service
+

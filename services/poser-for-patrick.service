@@ -1,0 +1,18 @@
+[Unit]
+Description=poser-for-patrick
+After=etcd.service
+After=docker.service
+Requires=docker.service
+
+[Service]
+Restart=on-failure
+TimeoutSec=500
+ExecStartPre=-/usr/bin/docker kill poser-for-patrick
+ExecStartPre=-/usr/bin/docker rm poser-for-patrick
+ExecStartPre=/usr/bin/docker build --rm=true -t poser-for-patrick /home/core/src/rackspace/devops/patrick/tests/poser
+ExecStart=/usr/bin/docker run --rm -p 80:80 --name poser-for-patrick pablosan/poser
+ExecStop=-/usr/bin/docker stop poser-for-patrick
+
+[X-Fleet]
+X-Conflicts=poser-for-patrick.service
+

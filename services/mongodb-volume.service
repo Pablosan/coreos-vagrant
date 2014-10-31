@@ -1,0 +1,16 @@
+[Unit]
+Description=mongodb-volume
+After=etcd.service
+After=docker.service
+Requires=docker.service
+
+[Service]
+Restart=on-failure
+ExecStartPre=-/usr/bin/docker kill mongodb-volume
+ExecStartPre=-/usr/bin/docker rm mongodb-volume
+ExecStart=/usr/bin/docker run --name mongodb-volume -v /home/core/mongodb-data:/data/db busybox
+ExecStop=-/usr/bin/docker stop mongodb-volume
+
+[X-Fleet]
+X-Conflicts=mongodb-volume.service
+
